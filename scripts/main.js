@@ -21,9 +21,8 @@ function getNextTimeCode(currentTimeCode) {
   if (index !== -1 && index < TIME_CODES.length - 1) {
     return TIME_CODES[index + 1];
   }
-  return TIME_CODES[0]; // Zurück zum Anfang
+  return TIME_CODES[0]; // Back to the beginning
 }
-
 function preloadNextImage(currentTimeCode) {
   const nextTimeCode = getNextTimeCode(currentTimeCode);
 
@@ -44,13 +43,13 @@ function OnTimeChanged() {
   const isAvailableTimeCode = find_timeCode(timeCode);
 
   if (isAvailableTimeCode) {
-    // Prüfen ob das Bild bereits vorgeladen wurde
+    // Check if the image was already preloaded
     if (
       preloadedImg &&
       preloadedTimeCode === timeCode &&
       preloadedImg.complete
     ) {
-      // Vorgeladenes Bild verwenden
+      // Use preloaded image
       if (currentImg) {
         currentImg.remove();
       }
@@ -60,7 +59,7 @@ function OnTimeChanged() {
       preloadedImg = null;
       preloadedTimeCode = null;
     } else {
-      // Bild laden und erst anzeigen wenn fertig
+      // Load image and only display when ready
       const newImg = new Image();
       newImg.onload = function () {
         if (currentImg) {
@@ -73,7 +72,7 @@ function OnTimeChanged() {
       newImg.src = `./assets/${timeCode}.jpg`;
     }
 
-    // Nächstes Bild im Hintergrund vorladen
+    // Preload next image in the background
     preloadNextImage(timeCode);
   }
 }
