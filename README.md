@@ -7,7 +7,7 @@ by Erik Anton Reinhardt.<br>
 
 ---
 
-**Pre-Setup (Checklist):**
+**Pre-Setup:**
 
 All 1440 images (one for each minute of a 24-hour period) must be in JPG format and stored in the ```assets``` folder, following the structure:
 
