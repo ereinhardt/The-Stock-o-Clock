@@ -1,4 +1,4 @@
-# The-Stock-o-Clock (v.1.1-12-2024)
+# The-Stock-o-Clock (v.1.1-2-2024)
 
 "The Stock o' Clock" displays a new stock photo every minute, 24/7, with a clock synchronised to the current time.
 
