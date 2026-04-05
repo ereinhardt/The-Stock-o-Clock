@@ -8,6 +8,11 @@ body {
     padding: 0;
     overflow: hidden;
     position: relative;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    touch-action: pan-x pan-y;
     min-height: 100vh;
 }
 
