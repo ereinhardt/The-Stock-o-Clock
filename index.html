@@ -1,9 +1,12 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
     <link rel="stylesheet" href="main.css" />
     <script src="./scripts/timeCodes.js" type="module"></script>
     <script src="./scripts/main.js" type="module"></script>
@@ -15,16 +18,52 @@
     ></script>
     <title>The Stock o' Clock</title>
     <script>
-      // Prevent pinch-zoom 
-      document.addEventListener('gesturestart', function(e) { e.preventDefault(); });
-      document.addEventListener('gesturechange', function(e) { e.preventDefault(); });
-      document.addEventListener('gestureend', function(e) { e.preventDefault(); });
-      document.addEventListener('touchmove', function(e) {
-        if (e.touches.length > 1) { e.preventDefault(); }
-      }, { passive: false });
-      document.addEventListener('wheel', function(e) {
-        if (e.ctrlKey || e.metaKey) { e.preventDefault(); }
-      }, { passive: false });
+      // Prevent pinch-zoom
+      document.addEventListener("gesturestart", function (e) {
+        e.preventDefault();
+      });
+      document.addEventListener("gesturechange", function (e) {
+        e.preventDefault();
+      });
+      document.addEventListener("gestureend", function (e) {
+        e.preventDefault();
+      });
+      document.addEventListener(
+        "touchmove",
+        function (e) {
+          if (e.touches.length > 1) {
+            e.preventDefault();
+          }
+        },
+        { passive: false },
+      );
+      document.addEventListener(
+        "wheel",
+        function (e) {
+          if (e.ctrlKey || e.metaKey) {
+            e.preventDefault();
+          }
+        },
+        { passive: false },
+      );
+      // Prevent keyboard zoom (Cmd/Ctrl + +/-/0)
+      document.addEventListener(
+        "keydown",
+        function (e) {
+          if (
+            (e.ctrlKey || e.metaKey) &&
+            (e.key === "+" ||
+              e.key === "-" ||
+              e.key === "=" ||
+              e.key === "0" ||
+              e.code === "NumpadAdd" ||
+              e.code === "NumpadSubtract")
+          ) {
+            e.preventDefault();
+          }
+        },
+        { passive: false },
+      );
     </script>
   </head>
   <body></body>
