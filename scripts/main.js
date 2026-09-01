@@ -36,10 +36,15 @@ function preloadNextImage(currentTimeCode) {
   preloadedTimeCode = nextTimeCode;
 }
 
-function displayImage(image) {
+function clearImage() {
   if (currentImg) {
     currentImg.remove();
+    currentImg = null;
   }
+}
+
+function displayImage(image) {
+  clearImage();
   image.alt = "";
   document.body.appendChild(image);
   currentImg = image;
@@ -63,7 +68,13 @@ async function OnTimeChanged() {
   preloadNextImage(timeCode);
 
   const image = await imagePromise;
-  if (image && requestedTimeCode === timeCode) displayImage(image);
+  if (requestedTimeCode !== timeCode) return;
+
+  if (image) {
+    displayImage(image);
+  } else {
+    clearImage();
+  }
 }
 
 setInterval(() => {
