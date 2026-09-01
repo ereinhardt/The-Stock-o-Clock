@@ -11,63 +11,9 @@
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
     />
     <link rel="stylesheet" href="main.css" />
-    <script src="./scripts/timeCodes.js" type="module"></script>
     <script src="./scripts/main.js" type="module"></script>
-    <script
-      src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment-with-locales.min.js"
-      integrity="sha512-42PE0rd+wZ2hNXftlM78BSehIGzezNeQuzihiBCvUEB3CVxHvsShF86wBWwQORNxNINlBPuq7rG4WWhNiTVHFg=="
-      crossorigin="anonymous"
-      referrerpolicy="no-referrer"
-    ></script>
+    <script src="./scripts/prevent.js" type="module"></script>
     <title>The Stock o' Clock</title>
-    <script>
-      // Prevent pinch-zoom
-      document.addEventListener("gesturestart", function (e) {
-        e.preventDefault();
-      });
-      document.addEventListener("gesturechange", function (e) {
-        e.preventDefault();
-      });
-      document.addEventListener("gestureend", function (e) {
-        e.preventDefault();
-      });
-      document.addEventListener(
-        "touchmove",
-        function (e) {
-          if (e.touches.length > 1) {
-            e.preventDefault();
-          }
-        },
-        { passive: false },
-      );
-      document.addEventListener(
-        "wheel",
-        function (e) {
-          if (e.ctrlKey || e.metaKey) {
-            e.preventDefault();
-          }
-        },
-        { passive: false },
-      );
-      // Prevent keyboard zoom (Cmd/Ctrl + +/-/0)
-      document.addEventListener(
-        "keydown",
-        function (e) {
-          if (
-            (e.ctrlKey || e.metaKey) &&
-            (e.key === "+" ||
-              e.key === "-" ||
-              e.key === "=" ||
-              e.key === "0" ||
-              e.code === "NumpadAdd" ||
-              e.code === "NumpadSubtract")
-          ) {
-            e.preventDefault();
-          }
-        },
-        { passive: false },
-      );
-    </script>
   </head>
   <body></body>
 </html>

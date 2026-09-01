@@ -1,88 +1,77 @@
-import { TIME_CODES } from "./timeCodes.js";
+function getCurrentTime() {
+  const now = new Date();
+  const hour = String(now.getHours()).padStart(2, "0");
+  const minute = String(now.getMinutes()).padStart(2, "0");
+  return `${hour}:${minute}`;
+}
 
-const local_code = window.navigator.language.split("_")[0];
-var time = moment().locale(local_code).format("HH:mm");
+let time = getCurrentTime();
 let currentImg = null;
-let preloadedImg = null;
+let preloadedImagePromise = null;
 let preloadedTimeCode = null;
+let requestedTimeCode = null;
 
-function find_timeCode(timeCode) {
-  const codes = TIME_CODES;
+function getImageUrl(timeCode) {
+  return `./backend/image.php?time=${encodeURIComponent(timeCode)}`;
+}
 
-  for (let Code = 0; Code < codes.length; Code++) {
-    if (timeCode === codes[Code]) return true;
-  }
-
-  return false;
+function loadImage(timeCode) {
+  return new Promise((resolve) => {
+    const image = new Image();
+    image.onload = () => resolve(image);
+    image.onerror = () => resolve(null);
+    image.src = getImageUrl(timeCode);
+  });
 }
 
 function getNextTimeCode(currentTimeCode) {
-  const index = TIME_CODES.indexOf(currentTimeCode);
-  if (index !== -1 && index < TIME_CODES.length - 1) {
-    return TIME_CODES[index + 1];
-  }
-  return TIME_CODES[0]; // Back to the beginning
+  const [hour, minute] = currentTimeCode.split("_").map(Number);
+  const nextMinute = (hour * 60 + minute + 1) % (24 * 60);
+  return `${String(Math.floor(nextMinute / 60)).padStart(2, "0")}_${String(nextMinute % 60).padStart(2, "0")}`;
 }
+
 function preloadNextImage(currentTimeCode) {
   const nextTimeCode = getNextTimeCode(currentTimeCode);
-
-  if (nextTimeCode && find_timeCode(nextTimeCode)) {
-    preloadedImg = new Image();
-    preloadedImg.src = `./assets/${nextTimeCode}.jpg`;
-    preloadedTimeCode = nextTimeCode;
-  }
+  preloadedImagePromise = loadImage(nextTimeCode);
+  preloadedTimeCode = nextTimeCode;
 }
 
-function OnTimeChanged() {
-  const local_code = window.navigator.language.split("_")[0];
-  const current_time = moment().locale(local_code).format("HH:mm");
-  const hour = current_time.split(":")[0];
-  const sec = current_time.split(":")[1];
-  const timeCode = `${hour}_${sec}`;
-
-  const isAvailableTimeCode = find_timeCode(timeCode);
-
-  if (isAvailableTimeCode) {
-    // Check if the image was already preloaded
-    if (
-      preloadedImg &&
-      preloadedTimeCode === timeCode &&
-      preloadedImg.complete
-    ) {
-      // Use preloaded image
-      if (currentImg) {
-        currentImg.remove();
-      }
-      preloadedImg.alt = "";
-      document.body.appendChild(preloadedImg);
-      currentImg = preloadedImg;
-      preloadedImg = null;
-      preloadedTimeCode = null;
-    } else {
-      // Load image and only display when ready
-      const newImg = new Image();
-      newImg.onload = function () {
-        if (currentImg) {
-          currentImg.remove();
-        }
-        newImg.alt = "";
-        document.body.appendChild(newImg);
-        currentImg = newImg;
-      };
-      newImg.src = `./assets/${timeCode}.jpg`;
-    }
-
-    // Preload next image in the background
-    preloadNextImage(timeCode);
+function displayImage(image) {
+  if (currentImg) {
+    currentImg.remove();
   }
+  image.alt = "";
+  document.body.appendChild(image);
+  currentImg = image;
+}
+
+async function OnTimeChanged() {
+  const currentTime = getCurrentTime();
+  const [hour, minute] = currentTime.split(":");
+  const timeCode = `${hour}_${minute}`;
+  requestedTimeCode = timeCode;
+
+  let imagePromise;
+  if (preloadedImagePromise && preloadedTimeCode === timeCode) {
+    imagePromise = preloadedImagePromise;
+    preloadedImagePromise = null;
+    preloadedTimeCode = null;
+  } else {
+    imagePromise = loadImage(timeCode);
+  }
+
+  preloadNextImage(timeCode);
+
+  const image = await imagePromise;
+  if (image && requestedTimeCode === timeCode) displayImage(image);
 }
 
 setInterval(() => {
-  var t = moment().locale(local_code).format("HH:mm");
+  const currentTime = getCurrentTime();
 
-  if (t !== time) {
+  if (currentTime !== time) {
     OnTimeChanged();
-    time = t;
+    time = currentTime;
   }
 }, 500);
 
