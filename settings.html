@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>The Stock o' Clock – Settings</title>
+    <style>
+      .setting {
+        border: 1px solid silver;
+        padding: 1rem;
+        margin-bottom: 1rem;
+      }
+
+      .setting > :first-child {
+        margin-top: 0;
+      }
+
+      .setting > :last-child {
+        margin-bottom: 0;
+      }
+
+      #timestamp-box {
+        height: 300px;
+        overflow-y: auto;
+        border: 1px solid silver;
+        padding: 8px;
+      }
+
+      #timestamp-box ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+
+      #timestamp-box li {
+        color: black;
+      }
+
+      #timestamp-box li.current {
+        color: limegreen;
+      }
+
+      #timestamp-box li.current a {
+        color: limegreen;
+      }
+    </style>
+  </head>
+  <body>
+    <h1 style="margin-top: 0">The Stock o' Clock – Settings</h1><br>
+
+    <div class="setting">
+      <h3>User-Time:</h3>
+      <p id="user-time"></p>
+    </div>
+
+    <div class="setting">
+      <h3 id="timestamp-heading">Timestamps (0/1440):</h3>
+      <div id="timestamp-box">
+        <ul id="timestamp-list"></ul>
+      </div>
+    </div>
+
+    <script>
+      const userTimeHeading = document.getElementById("user-time");
+      const itemsByTimeCode = new Map();
+      let currentItem = null;
+
+      function getCurrentTimeCode() {
+        const now = new Date();
+        return (
+          String(now.getHours()).padStart(2, "0") +
+          "_" +
+          String(now.getMinutes()).padStart(2, "0")
+        );
+      }
+
+      function updateUserTime() {
+        userTimeHeading.textContent = new Date().toLocaleTimeString();
+        highlightCurrentTimeCode();
+      }
+
+      function highlightCurrentTimeCode() {
+        const item = itemsByTimeCode.get(getCurrentTimeCode());
+        if (item === currentItem) return;
+
+        currentItem?.classList.remove("current");
+        item?.classList.add("current");
+        currentItem = item ?? null;
+      }
+
+      updateUserTime();
+      setInterval(updateUserTime, 500);
+
+      (async () => {
+        let counts = {};
+
+        try {
+          const response = await fetch("./backend/timestamps.php", { cache: "no-store" });
+          if (response.ok) {
+            counts = await response.json();
+          }
+        } catch {
+          // keep every entry marked as missing when the list cannot be loaded
+        }
+
+        const list = document.getElementById("timestamp-list");
+        const fragment = document.createDocumentFragment();
+        let availableCount = 0;
+
+        for (let minutes = 0; minutes < 24 * 60; minutes++) {
+          const timeCode =
+            String(Math.floor(minutes / 60)).padStart(2, "0") +
+            "_" +
+            String(minutes % 60).padStart(2, "0");
+
+          const count = counts[timeCode] ?? 0;
+          const item = document.createElement("li");
+
+          if (count > 0) {
+            const link = document.createElement("a");
+            link.href = `./backend/gallery.php?time=${encodeURIComponent(timeCode)}`;
+            link.target = "_blank";
+            link.rel = "noopener";
+            link.textContent = `${timeCode} (${count})`;
+            item.appendChild(link);
+            availableCount++;
+          } else {
+            item.textContent = `${timeCode} (${count})`;
+          }
+
+          itemsByTimeCode.set(timeCode, item);
+          fragment.appendChild(item);
+        }
+
+        list.appendChild(fragment);
+        highlightCurrentTimeCode();
+        document.getElementById("timestamp-heading").textContent =
+          `Timestamps (${availableCount}/1440):`;
+      })();
+    </script>
+  </body>
+</html>
+  
