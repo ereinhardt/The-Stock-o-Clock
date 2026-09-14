@@ -33,16 +33,19 @@ $title = htmlspecialchars($timeCode, ENT_QUOTES, 'UTF-8');
         border: 1px solid silver;
         padding: 1rem;
         margin-bottom: 1rem;
+        box-sizing: border-box;
       }
 
       .image-box h3 {
         margin-top: 0;
         margin-bottom: 0.5rem;
+        overflow-wrap: anywhere;
       }
 
       img {
         display: block;
-        max-width: 400px;
+        width: 400px;
+        max-width: 100%;
         height: auto;
       }
     </style>
