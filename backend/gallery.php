@@ -37,6 +37,7 @@ $title = htmlspecialchars($timeCode, ENT_QUOTES, 'UTF-8');
 
       .image-box h3 {
         margin-top: 0;
+        margin-bottom: 0.5rem;
       }
 
       img {

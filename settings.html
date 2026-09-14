@@ -11,12 +11,25 @@
         margin-bottom: 1rem;
       }
 
+      .setting h3 {
+        margin-top: 0;
+        margin-bottom: 0;
+      }
+
+      .setting p {
+        margin-top: 0;
+      }
+
       .setting > :first-child {
         margin-top: 0;
       }
 
       .setting > :last-child {
         margin-bottom: 0;
+      }
+
+      .setting h3 {
+        margin-bottom: 0.5rem;
       }
 
       #timestamp-box {
@@ -50,7 +63,7 @@
 
     <div class="setting">
       <h3>User-Time:</h3>
-      <p id="user-time"></p>
+      <p><a href="#" id="user-time"></a></p>
     </div>
 
     <div class="setting">
@@ -64,6 +77,17 @@
       const userTimeHeading = document.getElementById("user-time");
       const itemsByTimeCode = new Map();
       let currentItem = null;
+
+      userTimeHeading.addEventListener("click", (event) => {
+        event.preventDefault();
+        if (!currentItem) return;
+
+        const box = document.getElementById("timestamp-box");
+        const boxRect = box.getBoundingClientRect();
+        const itemRect = currentItem.getBoundingClientRect();
+        box.scrollTop +=
+          itemRect.top - boxRect.top - (box.clientHeight - itemRect.height) / 2;
+      });
 
       function getCurrentTimeCode() {
         const now = new Date();
